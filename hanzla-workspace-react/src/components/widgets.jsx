@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { F, PT, FR } from "../data";
-import { sb } from "../supabase";
 import { fixUrl } from "../util";
 import { useSite, forPage, thumbOf } from "../store";
 export const Faq = ({ k }) => (
@@ -107,7 +106,13 @@ export function ContactForm() {
     setSt("busy");
     const lead = { name: f.n.trim(), email: f.e.trim(), service: f.s, message: f.m.trim() };
     // 1) save in Supabase (visible in Admin > Messages)
-    const saved = await sb.from("leads").insert(lead);
+    let saved;
+    try {
+      const { sb } = await import("../supabase");
+      saved = await sb.from("leads").insert(lead);
+    } catch (err) {
+      saved = { error: err };
+    }
     // 2) email notification to the site owner
     let mailed = false;
     try {

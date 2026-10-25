@@ -15,7 +15,18 @@ const PH = (b, w, c) => (
   <div className="art">
     <div className="mkp">
       <div className="scr">
+        <div className="tabs">
+          <span>Following</span>
+          <b>For You</b>
+        </div>
+        <div className="hair rs" />
         <div className="face rs" />
+        <div className="bot pp d3" />
+        <div className="rail pp d4">
+          <i className="hrt" />
+          <i />
+          <i />
+        </div>
         <div className="bub rs d2">{b}</div>
         <div className="pbar">
           <i className="fx" style={{ "--w": w + "%" }} />
@@ -339,7 +350,8 @@ export default function Reel({ k, d, label }) {
   }, []);
   useEffect(() => {
     if (!(play && vis)) return;
-    const id = setInterval(() => setT((x) => (x + 100) % T), 100);
+    if (document.hidden) return;
+    const id = setInterval(() => setT((x) => (x + 250) % T), 250);
     return () => clearInterval(id);
   }, [play, vis, T]);
   return (

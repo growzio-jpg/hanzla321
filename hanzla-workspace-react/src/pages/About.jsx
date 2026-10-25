@@ -9,8 +9,11 @@ import {
   Projects,
   Marquee,
 } from "../components";
-import { hideImg, toTop, goCalc } from "../util";
+import { useSite } from "../store";
+import Certificates from "../components/Certificates";
+import { hideImg, toTop, goCalc, dlUrl } from "../util";
 export default function About() {
+  const { settings } = useSite();
   return (
     <div className="pg on">
       <div className="hero">
@@ -37,14 +40,16 @@ export default function About() {
               >
                 Chat on WhatsApp
               </a>
-              <a
-                className="btn o"
-                href="https://shorturl.at/ESq2A?usp=sharing"
-                target="_blank"
-                rel="noopener"
-              >
-                Download resume
-              </a>
+              {settings.resume_url && (
+                <a
+                  className="btn o"
+                  href={dlUrl(settings.resume_url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download resume
+                </a>
+              )}
             </div>
           </div>
           <div className="pf">
@@ -320,6 +325,7 @@ export default function About() {
           </div>
         </div>
       </section>
+      <Certificates />
       <section>
         <div className="w">
           <div className="hd c">

@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { PL, PJ } from "./data";
-import { sb } from "./supabase";
+// supabase-js is loaded on demand so it never blocks the first paint
+const getSb = () => import("./supabase").then((m) => m.sb);
 
 export const PAGES = ["home", "ugc", "web", "seo", "about", "contact", "portfolio"];
 const PORT = ["sos", "gz", "sk", "ap", "hw"];
@@ -24,7 +25,12 @@ const defaults = Object.keys(PL).map((k, i) => ({
 }));
 let state = {
   projects: defaults,
-  settings: { wa_link: "https://wa.me/923195179084", wa_number: "923195179084" },
+  certificates: [],
+  settings: {
+    wa_link: "https://wa.me/923195179084",
+    wa_number: "923195179084",
+    resume_url: "https://shorturl.at/ESq2A?usp=sharing",
+  },
 };
 const subs = new Set();
 const set = (s) => {
@@ -33,14 +39,22 @@ const set = (s) => {
 };
 let started = false;
 export async function reloadSite() {
-  const [p, s] = await Promise.all([
+  let sb;
+  try {
+    sb = await getSb();
+  } catch (_) {
+    return;
+  }
+  const [p, s, c] = await Promise.all([
     sb.from("projects").select("*").eq("published", true).order("sort_order").order("created_at"),
     sb.from("site_settings").select("key,value"),
+    sb.from("certificates").select("*").eq("published", true).order("sort_order").order("created_at"),
   ]);
   const next = {};
   if (!p.error && p.data) next.projects = p.data;
   if (!s.error && s.data?.length)
     next.settings = { ...state.settings, ...Object.fromEntries(s.data.map((r) => [r.key, r.value])) };
+  if (!c.error && c.data) next.certificates = c.data;
   set(next);
 }
 export const getSite = () => state;

@@ -5,12 +5,12 @@ import Topbar from "./components/Topbar";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import Ugc from "./pages/Ugc";
-import Web from "./pages/Web";
-import SeoServices from "./pages/SeoServices";
-import Portfolio from "./pages/Portfolio";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
+const Ugc = lazy(() => import("./pages/Ugc"));
+const Web = lazy(() => import("./pages/Web"));
+const SeoServices = lazy(() => import("./pages/SeoServices"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
 import { useSite } from "./store";
 const Admin = lazy(() => import("./pages/Admin"));
 const PAGES = {
@@ -53,7 +53,9 @@ export default function App() {
       <Topbar />
       <Header id={id} />
       <main id="main">
-        <Page key={id} />
+        <Suspense fallback={<div style={{ minHeight: "70vh" }} />}>
+          <Page key={id} />
+        </Suspense>
       </main>
       <Footer />
       <a
